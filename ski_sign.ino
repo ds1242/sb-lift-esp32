@@ -1,5 +1,5 @@
 #include <Adafruit_NeoPixel.h>
-#include <Wifi.h>
+#include <WiFi.h>
 #include "arduino_secrets.h"
 
 #define PIN 5
@@ -13,15 +13,15 @@ Adafruit_NeoPixel pixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  Wifi.begin(ssid, password);
+  WiFi.begin(ssid, password);
 
-  while (Wifi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("Connected to Wifi");
   Serial.print("IP Address: ");
-  Serial.println(Wifi.localIP());
+  Serial.println(WiFi.localIP());
 
   pixel.begin();
 }
@@ -37,10 +37,10 @@ void loop() {
   delay(500);
 
   // Turn off
-  for(int i = 0; i < 6; i++) {
-    pixel.setPixelColor(i, pixel.Color(0, 0, 0));
-  }
+  // for(int i = 0; i < 6; i++) {
+  //   pixel.setPixelColor(i, pixel.Color(0, 0, 0));
+  // }
   
-  pixel.show();
-  delay(500);
+  // pixel.show();
+  // delay(500);
 }
