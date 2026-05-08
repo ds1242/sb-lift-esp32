@@ -1,5 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 #include "arduino_secrets.h"
 
 #define PIN 5
@@ -7,6 +9,11 @@
 
 const char* ssid = SSID;
 const char* password = SSID_PASS;
+const char* test_api = TEST_API;
+const char* api_key = API_KEY;
+
+unsigned long previousMillis = 0;
+const long interval = 1000 * 60; //milliseconds to a minute
 
 Adafruit_NeoPixel pixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
@@ -27,14 +34,33 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // Turn on (white)
-  for(int i = 0; i < 6; i++) {
-    pixel.setPixelColor(i, pixel.Color(0, 255, 0));
-  }
+  unsigned long currentMillis = millis();
   
-  pixel.show();
-  delay(500);
+  int httpCode;
+  String payload;
+
+  if(currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+
+    if(WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+      http.begin(test_api);
+      http.addHeader("X-API-Key", api_key);
+
+
+      httpCode = http.GET();
+      Serial.printf("HTTP Code: %d\n", httpCode);
+      payload = http.getString();
+      Serial.println(payload);
+      http.end();
+    }
+    
+    // Turn on (white)
+    for(int i = 0; i < 6; i++) {
+      pixel.setPixelColor(i, pixel.Color(0, 255, 0));
+    }
+    
+    pixel.show();
 
   // Turn off
   // for(int i = 0; i < 6; i++) {
@@ -43,4 +69,7 @@ void loop() {
   
   // pixel.show();
   // delay(500);
+  
+    
+  }
 }
