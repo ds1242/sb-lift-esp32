@@ -57,6 +57,7 @@ void loop() {
       // query http endpoint for data
       httpCode = http.GET();
       payload = http.getString();
+      Serial.println(httpCode);
       // use built in error to handle a deserialization issue
       DeserializationError error = deserializeJson(doc, payload);
       if (error) {
@@ -65,7 +66,7 @@ void loop() {
         return;
       }
       // convert to JsonArray to iterate though and store the current status
-      liftArray : doc["lift"].as<JsonArray>();
+      liftArray = doc["lift"].as<JsonArray>();
       for(int i = 0; i < liftArray.size(); i++) {
         JsonObject lift_item = liftArray[i];
         liftStatusArr[i] = lift_item["status"].as<String>();  // "open", "closed", "on_hold"
@@ -74,10 +75,10 @@ void loop() {
     }
 
     // Set pixel color
-    for (int i = 0; i < liftArray.size(); i++) {
-      if(strcmp(liftArray[i], "open") == 0) {
+    for (int i = 0; i < 14; i++) {
+      if(liftStatusArr[i] == "open") {
         pixel.setPixelColor(i, pixel.Color(255, 0, 0));
-      } else if(strcmp(liftArray[i], "closed") == 0) {
+      } else if(liftStatusArr[i] == "closed") {
         pixel.setPixelColor(i, pixel.Color(0, 255, 0));
       } else {
         pixel.setPixelColor(i, pixel.Color(153, 255, 28));
